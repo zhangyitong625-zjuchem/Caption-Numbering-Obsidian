@@ -1,9 +1,8 @@
-<<<<<<< HEAD
 # Caption Numbering
 
 > **Automatically number figure/table captions using 6th-level headings (`######`) in Obsidian.**
 
-[中文文档](#caption-numbering-中文文档)
+[中文文档](README-zh-cn.md)
 
 ---
 
@@ -164,11 +163,18 @@ npm run build
 npm test
 ```
 
+## Suggested to apply together with
+
+[Number-Headings@onlyafly](https://github.com/onlyafly/number-headings-obsidian)
+
+[Better-Export-pdf@l1xnan](https://github.com/l1xnan/obsidian-better-export-pdf)
+
 ## License
 
 MIT
 
-=======
-# Caption-Numbering-Obsidian-
-Automatically number figure/table captions using 6th-level headings (`######`) in Obsidian.
->>>>>>> d2919361ee8f276a27c969c61a24119a6154c3b3
+## Similar Project
+
+[EasyReference@mcardZH](https://github.com/mcardZH/EasyReference)
+
+[Number-Headings-Obsidian@onlyafly](https://github.com/onlyafly/number-headings-obsidian)

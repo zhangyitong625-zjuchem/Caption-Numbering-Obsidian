@@ -8,6 +8,7 @@
 
 ---
 # Caption Numbering 中文文档
+[English version](README.md)
 ## 功能特性
 
 - **基于标签的自动编号**：自定义标签（如 `图`、`表`、`算法`）。以 `###### 图 xxx` 开头的标题自动编号为 `###### 图 1 xxx`、`###### 图 2 xxx` 等。
@@ -164,7 +165,19 @@ npm run build
 # 运行测试
 npm test
 ```
+## 推荐配合使用
+
+[Number-Headings@onlyafly](https://github.com/onlyafly/number-headings-obsidian)
+
+[Better-Export-pdf@l1xnan](https://github.com/l1xnan/obsidian-better-export-pdf)
+
 
 ## 许可证
 
 MIT
+
+## 相似项目
+
+[EasyReference@mcardZH](https://github.com/mcardZH/EasyReference)
+
+[Number-Headings-Obsidian@onlyafly](https://github.com/onlyafly/number-headings-obsidian)
