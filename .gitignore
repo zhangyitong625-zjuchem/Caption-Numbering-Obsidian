@@ -1,0 +1,16 @@
+# Intellij
+*.iml
+.idea
+
+# npm
+node_modules
+package-lock.json
+
+# build
+*.js.map
+
+# obsidian
+data.json
+
+# VSCode
+.vscode/*.log
