@@ -51,8 +51,6 @@ export function findRangeInHeaderString(lineText: string, lineNumber: number, fl
   const matches = lineText.match(regex)
 
   if (matches && matches.length !== 1) {
-    // eslint-disable-next-line no-console
-    console.log("Unexpected heading format: '" + lineText + "'")
     return undefined
   }
 

@@ -4,24 +4,24 @@
     "inlineSourceMap": true,
     "inlineSources": true,
     "module": "ESNext",
-    "target": "es6",
+    "target": "ES2018",
     "allowJs": true,
     "moduleResolution": "node",
-    "importHelpers": true,
+    "importHelpers": false,
     "strict": true,
     "lib": [
       "dom",
-      "es5",
+      "es2016",
       "scripthost",
-      "es2015"
+      "es2018"
     ],
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "forceConsistentCasingInFileNames": true,
     "noPropertyAccessFromIndexSignature": true,
-    "esModuleInterop": true,
+    "esModuleInterop": true
   },
   "include": [
     "**/*.ts"
-  ],
+  ]
 }

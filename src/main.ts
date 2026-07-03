@@ -29,7 +29,7 @@ class CaptionPluginSettingTab extends PluginSettingTab {
     const { containerEl } = this
     containerEl.empty()
 
-    containerEl.createEl('h2', { text: '题注自动编号 - 设置' })
+    new Setting(containerEl).setName('题注自动编号 - 设置').setHeading()
 
     containerEl.createEl('div', {
       text: '在文档中使用 ###### 加上标签名来创建题注。例如 "###### 图 系统架构图"，插件会自动编号为 "###### 图 1 系统架构图"。'
@@ -50,7 +50,7 @@ caption numbering: 图, 表, auto
     containerEl.createEl('br', {})
 
     // ---- 标签管理区域标题 ----
-    containerEl.createEl('h3', { text: '标签类型管理' })
+    new Setting(containerEl).setName('标签类型管理').setHeading()
 
     // ---- 添加标签按钮 ----
     new Setting(containerEl)
@@ -95,7 +95,7 @@ caption numbering: 图, 表, auto
     containerEl.createEl('br', {})
 
     // ---- 编号模式选择 ----
-    containerEl.createEl('h3', { text: '编号格式设置' })
+    new Setting(containerEl).setName('编号格式设置').setHeading()
 
     new Setting(containerEl)
       .setName('编号模式')
@@ -170,9 +170,6 @@ export default class CaptionPlugin extends Plugin {
   settings!: CaptionPluginSettings
 
   async onload(): Promise<void> {
-    // eslint-disable-next-line no-console
-    console.info('Loading Caption Numbering Plugin, version ' + this.manifest.version)
-
     await this.loadSettings()
 
     // ---- 命令 1：编号题注 ----
@@ -241,8 +238,6 @@ export default class CaptionPlugin extends Plugin {
 
         if (settings.auto) {
           updateCaptionNumbering(viewInfo, settings)
-          // eslint-disable-next-line no-console
-          console.log('Caption Plugin: 已自动编号')
         }
       }
     }, 10 * 1000))

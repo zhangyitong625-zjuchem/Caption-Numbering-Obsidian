@@ -29,7 +29,7 @@
 
 ### Manual installation
 
-1. Download the latest release from the [Releases](https://github.com/your-username/caption-numbering-obsidian/releases) page.
+1. Download the latest release from the [Releases](https://github.com/zhangyitong625-zjuchem/Caption-Numbering-Obsidian/releases) page.
 2. Unzip into your vault's `.obsidian/plugins/caption-numbering/` folder.
 3. Enable the plugin in **Settings → Community Plugins**.
 

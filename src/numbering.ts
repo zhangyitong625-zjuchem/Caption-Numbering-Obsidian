@@ -416,9 +416,6 @@ export const updateCaptionNumbering = (
 
   // ========== 一次性应用所有修改（题注编号 + 双链引用更新）==========
   if (changes.length > 0) {
-    // eslint-disable-next-line no-console
-    console.log('Caption Plugin: Applying caption numbering changes:', changes.length)
-
     editor.transaction({ changes })
   }
 }

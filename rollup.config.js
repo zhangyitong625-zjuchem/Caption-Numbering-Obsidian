@@ -21,7 +21,7 @@ export default {
     exports: 'default',
     banner
   },
-  external: ['obsidian'],
+  external: ['obsidian', 'tslib'],
   plugins: [
     typescript(),
     nodeResolve({ browser: true }),
