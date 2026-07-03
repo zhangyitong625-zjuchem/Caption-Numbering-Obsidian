@@ -32,7 +32,7 @@
 
 ### 手动安装
 
-1. 从 [Releases](https://github.com/your-username/caption-numbering-obsidian/releases) 页面下载最新版本。
+1. 从 [Releases](https://github.com/zhangyitong625-zjuchem/Caption-Numbering-Obsidian/releases) 页面下载最新版本。
 2. 解压到你的库的 `.obsidian/plugins/caption-numbering/` 文件夹。
 3. 在 **设置 → 第三方插件** 中启用插件。
 
