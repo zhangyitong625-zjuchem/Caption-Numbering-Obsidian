@@ -1,6 +1,6 @@
 {
   "name": "caption-numbering-obsidian",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Obsidian plugin to automatically number figure/table captions using ###### headings with custom tags",
   "main": "main.js",
   "scripts": {
