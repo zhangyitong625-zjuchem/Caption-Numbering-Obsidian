@@ -3,7 +3,7 @@
 	"name": "Caption Numbering",
 	"version": "1.0.1",
 	"minAppVersion": "1.6.0",
-	"description": "Automatically number figure/table captions using 6th-level headings (######)",
+	"description": "Automatically number figure/table captions using 6th-level headings (######).",
 	"author": "Caption Numbering Plugin",
 	"authorUrl": "",
 	"isDesktopOnly": false

@@ -193,7 +193,7 @@ export default class CaptionPlugin extends Plugin {
 
     // ---- 命令 2：移除编号 ----
     this.addCommand({
-      id: 'remove-caption-numbering',
+      id: 'remove-numbering-of-captions',
       name: '移除文档中所有题注编号',
       checkCallback: (checking: boolean) => {
         if (checking) return isViewActive(this.app)
@@ -249,7 +249,8 @@ export default class CaptionPlugin extends Plugin {
   }
 
   async loadSettings(): Promise<void> {
-    this.settings = Object.assign({}, DEFAULT_CAPTION_SETTINGS, await this.loadData())
+    const loadedData = (await this.loadData()) as Partial<CaptionPluginSettings> | undefined
+    this.settings = Object.assign({}, DEFAULT_CAPTION_SETTINGS, loadedData)
   }
 
   async saveSettings(): Promise<void> {

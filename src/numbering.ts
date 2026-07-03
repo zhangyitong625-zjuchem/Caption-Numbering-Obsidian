@@ -1,9 +1,8 @@
 // ============================================================
 // 导入 Obsidian 核心类型：
-//   Editor        - 编辑器实例，用于读写文档内容
 //   EditorChange  - 描述一次文档修改操作（从哪到哪、替换成什么）
 // ============================================================
-import { Editor, EditorChange } from 'obsidian'
+import { EditorChange } from 'obsidian'
 
 // 当前活动视图的信息（包含编辑器、文档元数据等）
 import { ViewInfo } from './activeViewHelpers'
@@ -130,10 +129,7 @@ function replaceRangeEconomically(
   to: { line: number; ch: number },
   text: string
 ): void {
-  const previousText = editor.getRange(from, to)
-  if (previousText !== text) {
-    changes.push({ text, from, to })
-  }
+  changes.push({ text, from, to })
 }
 
 /**
@@ -277,11 +273,7 @@ export const updateCaptionNumbering = (
     const newHeadingText = newText.replace(/^#{1,6}\s+/, '')
 
     // 经济替换：只在文本变化时才记录修改
-    const previousText = editor.getRange(
-      { line: lineNumber, ch: 0 },
-      { line: lineNumber, ch: lineText.length }
-    )
-    if (previousText !== newText) {
+    if (lineText !== newText) {
       changes.push({
         text: newText,
         from: { line: lineNumber, ch: 0 },
@@ -461,7 +453,7 @@ export const removeCaptionNumbering = (
     const newText = `${hashPrefix} ${tagName} ${cleanText}`.trimEnd()
 
     replaceRangeEconomically(
-      editor, changes,
+      changes,
       { line: lineNumber, ch: 0 },
       { line: lineNumber, ch: lineText.length },
       newText

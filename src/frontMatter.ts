@@ -25,9 +25,9 @@ const OFF_KEY = 'off'
  * @returns 解析后的设置，如果 front matter 中没有题注相关键则返回 undefined
  */
 function parseCompactFrontMatterSettings(fm: FrontMatterCache): CaptionPluginSettings | undefined {
-  const entry = parseFrontMatterEntry(fm, 'caption numbering')
+  const entry = parseFrontMatterEntry(fm, 'caption numbering') as string | null
 
-  const entryString = String(entry)
+  const entryString = entry ?? ''
   const parts = entryString.split(',').map(s => s.trim()).filter(s => s.length > 0)
 
   const tags: TagDefinition[] = []
@@ -134,7 +134,7 @@ export const saveSettingsToFrontMatter = (
   file: TFile,
   settings: CaptionPluginSettings
 ): void => {
-  fileManager.processFrontMatter(file, frontmatter => {
+  void fileManager.processFrontMatter(file, (frontmatter: Record<string, unknown>) => {
     const v = settingsToCompactFrontMatterValue(settings)
     frontmatter['caption numbering'] = v
   })
