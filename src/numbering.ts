@@ -385,7 +385,7 @@ export const updateCaptionNumbering = (
       // 扫描没有 |显示文字 的双链引用：[[#图 1 系统架构]]
       const escapedHeading = headingText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
       const noDisplayRegex = new RegExp(
-        `\\[\\[([^\\]]*?)${escapedHeading}(?!\\|)(?=\\]\\])`,
+        `\\[\\[([^\\]]*?)${escapedHeading}(?!\\|)\\]\\]`,
         'g'
       )
 
