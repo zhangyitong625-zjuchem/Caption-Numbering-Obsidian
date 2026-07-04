@@ -36,5 +36,6 @@ export const DEFAULT_CAPTION_SETTINGS: CaptionPluginSettings = {
   headingLevelsToUse: 1,
   twoLevelSeparator: '-',
   auto: false,
-  off: false
+  off: false,
+  centerCaptions: false
 }

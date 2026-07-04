@@ -1,3 +1,8 @@
+/* ============================================================
+ * styles.css — 题注自动编号插件样式
+ * ============================================================ */
+
+/* ---- 按钮与提示文字样式 ---- */
 div.caption-numbering-button-container > button {
   font-weight: normal;
 }
@@ -5,4 +10,40 @@ div.caption-numbering-button-container > button {
 div.caption-numbering-question {
   font-weight: bold;
   margin-bottom: 10px;
+}
+
+/* ============================================================
+ * 居中对齐题注及其对应的图片/表格
+ *
+ * 开启方式：在设置面板中勾选"居中对齐题注"
+ * 关闭方式：取消勾选即可移除样式
+ *
+ * 样式优先级说明：
+ *   主题自定义样式 > 插件样式 > Obsidian 默认样式
+ *   如果你在主题中自定义了 h6 / img / table 的样式，
+ *   本插件的居中样式可能会被覆盖。
+ * ============================================================ */
+
+/* 六级标题（题注）居中 */
+body.caption-numbering-centered h6 {
+  text-align: center !important;
+}
+
+/* 表格居中 */
+body.caption-numbering-centered table {
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 图片居中（阅读视图 / 实时预览中的块级图片） */
+body.caption-numbering-centered img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 包含图片的段落居中（某些主题把图片包在 <p> 标签中） */
+body.caption-numbering-centered p:has(img) {
+  text-align: center;
 }

@@ -160,6 +160,27 @@ caption numbering: 图, 表, auto
           this.plugin.settings.auto = value
           await this.plugin.saveSettings()
         }))
+
+    containerEl.createEl('br', {})
+
+    // ---- 居中对齐开关 ----
+    new Setting(containerEl)
+      .setName('居中对齐题注')
+      .setDesc('让六级标题（题注）及其对应的图片、表格在阅读视图中居中对齐')
+      .addToggle(toggle => toggle
+        .setValue(this.plugin.settings.centerCaptions)
+        .setTooltip('启用居中对齐')
+        .onChange(async (value) => {
+          this.plugin.settings.centerCaptions = value
+          await this.plugin.saveSettings()
+          // 立即切换 body 类，无需重新加载
+          document.body.classList.toggle('caption-numbering-centered', value)
+        }))
+
+    containerEl.createEl('div', {
+      text: '💡 CSS 优先级说明：主题自定义样式 > 插件样式 > Obsidian 默认样式。如果你在主题中自定义了 h6 / img / table 的样式，插件居中样式可能被覆盖。',
+      attr: { style: 'font-size: 0.85em; color: var(--text-muted); margin-top: 8px;' }
+    })
   }
 }
 
@@ -255,5 +276,10 @@ export default class CaptionPlugin extends Plugin {
 
   async saveSettings(): Promise<void> {
     await this.saveData(this.settings)
+  }
+
+  onunload(): void {
+    // 卸载时移除 body 类，避免残留样式
+    document.body.classList.remove('caption-numbering-centered')
   }
 }
