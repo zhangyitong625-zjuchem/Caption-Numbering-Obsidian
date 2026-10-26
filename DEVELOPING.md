@@ -4,11 +4,15 @@
 
 1. Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
 2. Install NodeJS, then run `npm i` in the command line under your repo folder.
-3. Run `make build` to compile your plugin from `main.ts` to `main.js`.
-4. Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
+3. Run `npm run dev` (watch mode) — or `npm run build` for a one-off production build — to compile `src/main.ts` into `main.js`.
+4. Make changes under `src/`. Those changes should be automatically compiled into `main.js`.
 5. Reload Obsidian to load the new version of your plugin.
 6. Enable plugin in settings window.
 7. For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+
+## Tests
+
+`npm test` runs the jest suite in `tests/`. The suite mocks the Obsidian API (`tests/obsidianMock.ts`), so `numbering.ts` / `frontMatter.ts` can be exercised without a running app.
 
 ## Releasing new releases
 

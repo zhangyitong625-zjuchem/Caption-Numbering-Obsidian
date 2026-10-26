@@ -2,16 +2,17 @@
 // main.ts — 题注插件的入口文件
 //
 // 功能：
-//   1. 注册"编号题注"和"移除编号"两个命令
-//   2. 提供设置面板，让用户管理标签类型（增/删/改）
-//   3. 支持自动编号（每隔 10 秒检查一次）
+//   1. 注册"编号题注""移除编号""保存设置到 front matter"三个命令
+//   2. 提供设置面板，让用户管理标签类型（增/删/改）与编号模式
+//   3. 可选的自动编号（每隔 10 秒检查当前笔记一次）
 //   4. 输入 ###### 时弹出下拉菜单选择标签（通过 EditorSuggest）
+//   5. 可选的题注/图片/表格居中对齐（通过 body 上的 CSS 类）
 // ============================================================
 import { App, Plugin, PluginSettingTab, Setting } from 'obsidian'
 import { getViewInfo, isViewActive } from './activeViewHelpers'
 import { getFrontMatterSettingsOrAlternative, saveSettingsToFrontMatter } from './frontMatter'
-import { updateCaptionNumbering, removeCaptionNumbering, CaptionPluginSettings } from './numbering'
-import { DEFAULT_CAPTION_SETTINGS } from './settingsTypes'
+import { updateCaptionNumbering, removeCaptionNumbering } from './numbering'
+import { CaptionPluginSettings, DEFAULT_CAPTION_SETTINGS } from './settingsTypes'
 import { CaptionTagSuggest } from './captionSuggest'
 
 // ============================================================
@@ -60,7 +61,7 @@ caption numbering: 图, 表, auto
         .setButtonText('+ 添加标签')
         .setCta()  // 使用强调色（蓝色按钮）
         .onClick(async () => {
-          this.plugin.settings.tags.push({ name: '', counter: 0 })
+          this.plugin.settings.tags.push({ name: '' })
           await this.plugin.saveSettings()
           this.display()  // 刷新面板
         }))
@@ -112,9 +113,22 @@ caption numbering: 图, 表, auto
 
     // ---- 仅 "章节前缀" 模式下显示的额外设置 ----
     if (this.plugin.settings.numberingMode === 'fromHeading') {
+      // ---- 含上级标题编号开关 ----
+      new Setting(containerEl)
+        .setName('含上级标题编号')
+        .setDesc('开启后，把「标题来源级别」及其以上各级标题的编号用 "." 连成前缀。例如来源级别选 2 时，"# 一、简介" / "## 2 简并半导体" 下的题注写成 "图 1.2-1"；选 3 时同一份文档写成 "图 1.2.1-1"。关闭则只取来源级别那一级标题的编号（"图 2-1"）。没有编号的上级标题自动跳过。')
+        .addToggle(toggle => toggle
+          .setValue(this.plugin.settings.useHeadingPath)
+          .setTooltip('启用含上级标题编号')
+          .onChange(async (value) => {
+            this.plugin.settings.useHeadingPath = value
+            await this.plugin.saveSettings()
+            this.display()  // 刷新以条件显示后续控件
+          }))
+
       new Setting(containerEl)
         .setName('标题来源级别')
-        .setDesc('从第几级标题提取编号作为前缀？例如选 "2"，则从 H2 标题（如 ## 1 系统概述）中提取编号')
+        .setDesc('在哪一级标题上取编号？例如选 "2"，则从 H2 标题（如 "## 1 系统概述"、"## 2. 功能设计"、"## 一、绪论"）中取编号；同时决定编号前缀算到第几级')
         .addSlider(slider => slider
           .setLimits(1, 5, 1)
           .setValue(this.plugin.settings.sourceHeadingLevel)
@@ -124,17 +138,20 @@ caption numbering: 图, 表, auto
             await this.plugin.saveSettings()
           }))
 
-      new Setting(containerEl)
-        .setName('标题编号级数')
-        .setDesc('提取标题编号的前几级？例如标题 "1.2.3"，选 "1" 得到 "1"，选 "2" 得到 "1.2"')
-        .addSlider(slider => slider
-          .setLimits(1, 4, 1)
-          .setValue(this.plugin.settings.headingLevelsToUse)
-          .setDynamicTooltip()
-          .onChange(async (value) => {
-            this.plugin.settings.headingLevelsToUse = value
-            await this.plugin.saveSettings()
-          }))
+      // 「含上级标题编号」模式下每一级都参与编号，此项不再生效
+      if (!this.plugin.settings.useHeadingPath) {
+        new Setting(containerEl)
+          .setName('标题编号级数')
+          .setDesc('提取标题编号的前几级？例如标题 "1.2.3"，选 "1" 得到 "1"，选 "2" 得到 "1.2"')
+          .addSlider(slider => slider
+            .setLimits(1, 4, 1)
+            .setValue(this.plugin.settings.headingLevelsToUse)
+            .setDynamicTooltip()
+            .onChange(async (value) => {
+              this.plugin.settings.headingLevelsToUse = value
+              await this.plugin.saveSettings()
+            }))
+      }
 
       new Setting(containerEl)
         .setName('编号分隔符')
@@ -193,6 +210,9 @@ export default class CaptionPlugin extends Plugin {
   async onload(): Promise<void> {
     await this.loadSettings()
 
+    // ---- 恢复居中样式（body 类只在切换开关时设置，重启后会丢失） ----
+    document.body.classList.toggle('caption-numbering-centered', this.settings.centerCaptions)
+
     // ---- 命令 1：编号题注 ----
     this.addCommand({
       id: 'number-captions',
@@ -200,15 +220,8 @@ export default class CaptionPlugin extends Plugin {
       checkCallback: (checking: boolean) => {
         if (checking) return isViewActive(this.app)
 
-        const viewInfo = getViewInfo(this.app)
-        if (viewInfo) {
-          const settings = getFrontMatterSettingsOrAlternative(viewInfo.data, this.settings)
-          if (settings.off) return false
-
-          updateCaptionNumbering(viewInfo, settings)
-        }
-
-        return false
+        this.numberActiveDocument(false)
+        return true
       }
     })
 
@@ -221,7 +234,9 @@ export default class CaptionPlugin extends Plugin {
 
         const viewInfo = getViewInfo(this.app)
         if (viewInfo) {
-          removeCaptionNumbering(viewInfo, this.settings)
+          // 与编号命令保持一致：使用该文档实际生效的（front matter 合并后的）设置
+          const settings = getFrontMatterSettingsOrAlternative(viewInfo.data, this.settings)
+          removeCaptionNumbering(viewInfo, settings)
         }
 
         return true
@@ -242,7 +257,7 @@ export default class CaptionPlugin extends Plugin {
           saveSettingsToFrontMatter(this.app.fileManager, file, settings)
         }
 
-        return false
+        return true
       }
     })
 
@@ -251,22 +266,31 @@ export default class CaptionPlugin extends Plugin {
 
     // ---- 自动编号定时器（每 10 秒） ----
     this.registerInterval(window.setInterval(() => {
-      const viewInfo = getViewInfo(this.app)
-      if (viewInfo) {
-        const settings = getFrontMatterSettingsOrAlternative(viewInfo.data, this.settings)
-
-        if (settings.off) return
-
-        if (settings.auto) {
-          updateCaptionNumbering(viewInfo, settings)
-        }
-      }
+      this.numberActiveDocument(true)
     }, 10 * 1000))
 
     // ---- 注册输入建议（输入 ###### 时弹出标签选择） ----
-    // 由于 CaptionTagSuggest 需要从外部文件导入，
-    // 用户新建 captionSuggest.ts 后，在这里取消注释即可启用
     this.registerEditorSuggest(new CaptionTagSuggest(this.app, this.settings.tags))
+  }
+
+  /**
+   * 对当前活动笔记执行一次题注编号
+   *
+   * 命令与定时器共用这段逻辑：先解析出该文档实际生效的设置
+   * （front matter 优先），再判断是否被关闭 / 是否开启自动编号。
+   *
+   * @param onlyWhenAuto 为 true 时，只有开启了自动编号才执行（供定时器使用）
+   */
+  private numberActiveDocument (onlyWhenAuto: boolean): void {
+    const viewInfo = getViewInfo(this.app)
+    if (!viewInfo) return
+
+    const settings = getFrontMatterSettingsOrAlternative(viewInfo.data, this.settings)
+
+    if (settings.off) return
+    if (onlyWhenAuto && !settings.auto) return
+
+    updateCaptionNumbering(viewInfo, settings)
   }
 
   async loadSettings(): Promise<void> {

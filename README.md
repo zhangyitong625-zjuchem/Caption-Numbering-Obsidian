@@ -99,6 +99,42 @@ Enable **"章节前缀"** (Chapter Prefix) in settings. The result:
   ###### 图 2-1 部署图
 ```
 
+The chapter number is read from the heading text, so any of these heading styles work (select the matching **Source Heading Level**):
+
+| Heading | Chapter number | Caption |
+|---------|----------------|---------|
+| `## 1 系统概述` | 1 | 图 1-1 |
+| `## 2. 功能设计` | 2 | 图 2-1 |
+| `## 3、结果与讨论` | 3 | 图 3-1 |
+| `## 一、啊啊啊啊` | 1 | 图 1-1 |
+| `## 十一、附录` | 11 | 图 11-1 |
+| `## 第一章 引言` | 1 | 图 1-1 |
+
+Chinese numerals (`一`…`九`、`十`、`十一`、`二十三`、`一百零五` …) are converted to Arabic numbers. A heading only counts as a chapter when the number is followed by a separator or a space, so headings such as `## 一般性讨论` are left alone.
+
+#### Include parent heading numbers
+
+Turn on **「含上级标题编号」** (Include Parent Heading Numbers) to prefix each caption with the numbers of **all heading levels up to the Source Heading Level**, instead of only the Source Heading Level itself:
+
+```markdown
+# 一、简介              → level 1 = 1
+  ## 1 半导体          → level 2 = 1
+    ### 1.1 在一起      → level 3 = 1
+      ###### 图 能带甲图  → 图 1.1-1   (Source Heading Level = 2)
+                        → 图 1.1.1-1 (Source Heading Level = 3)
+  ## 2 简并半导体      → level 2 = 2
+    ### 2.1 在一起      → level 3 = 1
+      ###### 图 能带乙图  → 图 1.2-1   (Source Heading Level = 2)
+```
+
+Rules:
+
+- Source Heading Level still decides **how deep** the prefix goes; with the toggle off you get only that level's own number (`图 2-1`).
+- Each level contributes its own segment (the last dotted part: `1.1` → `1`), so a chapter written as `一、` and sections written as `1` / `1.1` line up as `1.2.1`.
+- A heading level without any number is skipped.
+- The counter restarts whenever the prefix changes, so `图 1.1-1` and `图 1.2-1` count independently.
+- **Heading Level Digits** does not apply in this mode (the depth is set by Source Heading Level).
+
 ### Cross-referencing with wikilinks
 
 You can reference captions using Obsidian's built-in wikilink syntax:
@@ -145,7 +181,11 @@ Available options:
 | **Source Heading Level** | Which heading level to extract chapter numbers from (1–5) |
 | **Heading Level Digits** | How many digits of the heading number to use (e.g., `1` → `1`, `2` → `1.2`) |
 | **Number Separator** | Separator between chapter prefix and sequence number (e.g., `-`, `.`, `:`) |
+| **Include Parent Heading Numbers** | Prefix with every heading level up to the Source Heading Level (`图 1.2-1` / `图 1.2.1-1`); when off, only that level's own number is used |
 | **Auto-numbering** | Toggle automatic numbering every 10 seconds |
+| **Center captions** | Center h6 captions and their images/tables in reading view (applied at load and on toggle) |
+
+> Note: a `caption numbering` key only overrides the fields it actually lists (tags / `auto` / `off`); numbering mode, heading levels and every other setting keep coming from the plugin settings, so notes with front matter behave exactly like notes without it.
 
 ## Development
 
